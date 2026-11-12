@@ -115,6 +115,8 @@ struct SectionHeader: View {
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(0.6)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .fixedSize()   // el título nunca se parte; si falta espacio, se encoge el valor
             Spacer(minLength: 4)
             if let trailing {
                 Text(trailing)
@@ -127,7 +129,8 @@ struct SectionHeader: View {
                 .monospacedDigit()
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
-                .fixedSize()
+                .minimumScaleFactor(0.7)
+                .layoutPriority(1)
         }
     }
 }
