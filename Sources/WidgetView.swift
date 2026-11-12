@@ -181,7 +181,7 @@ struct WidgetView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-        .frame(width: compact ? 230 : 280)
+        .frame(width: 280)   // mismo ancho en ambos modos; el compacto solo reduce la altura
         .fixedSize(horizontal: false, vertical: true)
     }
 
