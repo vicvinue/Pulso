@@ -216,8 +216,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         image?.isTemplate = true
         statusItem?.button?.image = image
         statusItem?.button?.toolTip = prefs.clickThrough
-            ? "Pulso — ignorando clics (⌃⌥C para desactivar)"
-            : "Pulso — monitor del sistema"
+            ? L("Pulso — ignorando clics (⌃⌥C para desactivar)")
+            : L("Pulso — monitor del sistema")
     }
 
     private func makeMenu() -> NSMenu {
@@ -253,54 +253,54 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func populate(_ menu: NSMenu) {
         menu.removeAllItems()
-        menu.addItem(item(panel.isVisible ? "Ocultar widget" : "Mostrar widget", #selector(toggleVisible),
+        menu.addItem(item(panel.isVisible ? L("Ocultar widget") : L("Mostrar widget"), #selector(toggleVisible),
                           key: "p", mods: [.control, .option]))
-        menu.addItem(item("Ignorar clics (atravesable)", #selector(toggleClickThrough), on: prefs.clickThrough,
+        menu.addItem(item(L("Ignorar clics (atravesable)"), #selector(toggleClickThrough), on: prefs.clickThrough,
                           key: "c", mods: [.control, .option]))
-        menu.addItem(item("Modo compacto", #selector(toggleCompact), on: prefs.compact))
+        menu.addItem(item(L("Modo compacto"), #selector(toggleCompact), on: prefs.compact))
         menu.addItem(.separator())
 
-        menu.addItem(submenu("Opacidad", [100, 90, 80, 70, 60, 50, 40, 30].map {
-            item("\($0) %", #selector(setOpacity(_:)), tag: $0, on: abs(prefs.opacity * 100 - Double($0)) < 3)
+        menu.addItem(submenu(L("Opacidad"), [100, 90, 80, 70, 60, 50, 40, 30].map {
+            item(L("%ld %%", $0), #selector(setOpacity(_:)), tag: $0, on: abs(prefs.opacity * 100 - Double($0)) < 3)
         }))
-        menu.addItem(submenu("Posición", [
-            item("Siempre encima", #selector(setLevel(_:)), tag: 0, on: !prefs.onDesktop),
-            item("En el escritorio (detrás de ventanas)", #selector(setLevel(_:)), tag: 1, on: prefs.onDesktop),
+        menu.addItem(submenu(L("Posición"), [
+            item(L("Siempre encima"), #selector(setLevel(_:)), tag: 0, on: !prefs.onDesktop),
+            item(L("En el escritorio (detrás de ventanas)"), #selector(setLevel(_:)), tag: 1, on: prefs.onDesktop),
             .separator(),
-            item("Volver a la esquina superior derecha", #selector(resetPosition)),
+            item(L("Volver a la esquina superior derecha"), #selector(resetPosition)),
         ]))
-        menu.addItem(submenu("Tema", ["Oscuro", "Claro", "Según el sistema"].enumerated().map {
+        menu.addItem(submenu(L("Tema"), [L("Oscuro"), L("Claro"), L("Según el sistema")].enumerated().map {
             item($0.element, #selector(setTheme(_:)), tag: $0.offset, on: prefs.theme == $0.offset)
         }))
 
-        var latencyItems = [item("Desactivada", #selector(setLatencyHost(_:)), tag: -1, on: prefs.latencyHost == nil)]
+        var latencyItems = [item(L("Desactivada"), #selector(setLatencyHost(_:)), tag: -1, on: prefs.latencyHost == nil)]
         for (i, h) in Self.latencyHosts.enumerated() {
             latencyItems.append(item(h.0, #selector(setLatencyHost(_:)), tag: i, on: prefs.latencyHost == h.1))
         }
         latencyItems.append(.separator())
         for secs in [10, 30, 60] {
-            let it = item("Cada \(secs) s", #selector(setLatencyInterval(_:)), tag: secs, on: prefs.latencyInterval == secs)
+            let it = item(L("Cada %ld s", secs), #selector(setLatencyInterval(_:)), tag: secs, on: prefs.latencyInterval == secs)
             it.isEnabled = prefs.latencyHost != nil
             latencyItems.append(it)
         }
-        menu.addItem(submenu("Latencia a internet", latencyItems))
+        menu.addItem(submenu(L("Latencia a internet"), latencyItems))
 
         var alertItems = Alerts.Kind.allCases.enumerated().map {
             item($0.element.menuTitle, #selector(toggleAlert(_:)), tag: $0.offset, on: prefs.alertEnabled($0.element.rawValue))
         }
         alertItems.append(.separator())
         if !alerts.notificationsAllowed {
-            alertItems.append(item("⚠︎ macOS bloquea las notificaciones de Pulso — Permitir…", #selector(openNotificationSettings)))
+            alertItems.append(item(L("⚠︎ macOS bloquea las notificaciones de Pulso — Permitir…"), #selector(openNotificationSettings)))
         }
-        alertItems.append(item("Enviar aviso de prueba", #selector(sendTestAlert)))
-        alertItems.append(item("Ajustes de notificaciones…", #selector(openNotificationSettings)))
-        menu.addItem(submenu("Avisos", alertItems))
+        alertItems.append(item(L("Enviar aviso de prueba"), #selector(sendTestAlert)))
+        alertItems.append(item(L("Ajustes de notificaciones…"), #selector(openNotificationSettings)))
+        menu.addItem(submenu(L("Avisos"), alertItems))
         menu.addItem(.separator())
 
-        menu.addItem(item("Abrir al iniciar sesión", #selector(toggleLogin), on: SMAppService.mainApp.status == .enabled))
-        menu.addItem(item("Abrir Monitor de Actividad", #selector(openActivityMonitor)))
+        menu.addItem(item(L("Abrir al iniciar sesión"), #selector(toggleLogin), on: SMAppService.mainApp.status == .enabled))
+        menu.addItem(item(L("Abrir Monitor de Actividad"), #selector(openActivityMonitor)))
         menu.addItem(.separator())
-        menu.addItem(item("Salir de Pulso", #selector(quit), key: "q"))
+        menu.addItem(item(L("Salir de Pulso"), #selector(quit), key: "q"))
     }
 
     // Acciones
@@ -362,7 +362,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         } catch {
             let alert = NSAlert()
-            alert.messageText = "No se pudo cambiar el inicio automático"
+            alert.messageText = L("No se pudo cambiar el inicio automático")
             alert.informativeText = error.localizedDescription
             alert.runModal()
         }

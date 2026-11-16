@@ -11,6 +11,7 @@ if [[ Resources/AppIcon.svg -nt Resources/AppIcon.icns ]] && command -v rsvg-con
   Resources/make-icon.sh
 fi
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+cp -R Resources/*.lproj "$APP/Contents/Resources/"
 cp Info.plist "$APP/Contents/Info.plist"
 codesign --force --sign - "$APP"
 if [[ "${1:-}" == "install" ]]; then

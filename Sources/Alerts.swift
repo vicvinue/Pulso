@@ -8,11 +8,11 @@ final class Alerts: NSObject, ObservableObject, UNUserNotificationCenterDelegate
 
         var menuTitle: String {
             switch self {
-            case .memory: return "Presión de memoria crítica"
-            case .disk: return "Disco con menos de 10 % libre"
-            case .battery: return "Batería bajo 15 %"
-            case .internet: return "Sin conexión a internet"
-            case .thermal: return "Equipo muy caliente"
+            case .memory: return L("Presión de memoria crítica")
+            case .disk: return L("Disco con menos de 10 % libre")
+            case .battery: return L("Batería bajo 15 %")
+            case .internet: return L("Sin conexión a internet")
+            case .thermal: return L("Equipo muy caliente")
             }
         }
     }
@@ -48,8 +48,8 @@ final class Alerts: NSObject, ObservableObject, UNUserNotificationCenterDelegate
 
     func sendTest() {
         let content = UNMutableNotificationContent()
-        content.title = "Pulso funciona"
-        content.body = "Así se verán los avisos de memoria, disco, batería, internet y temperatura."
+        content.title = L("Pulso funciona")
+        content.body = L("Así se verán los avisos de memoria, disco, batería, internet y temperatura.")
         content.sound = .default
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "pulso.test", content: content, trigger: nil))
     }
@@ -62,30 +62,32 @@ final class Alerts: NSObject, ObservableObject, UNUserNotificationCenterDelegate
         if s.memory.pressure >= 4 { memoryCriticalSince = memoryCriticalSince ?? Date() } else { memoryCriticalSince = nil }
         let memorySustained = memoryCriticalSince.map { Date().timeIntervalSince($0) >= 10 } ?? false
         check(.memory, on: memorySustained, off: s.memory.pressure < 2,
-              title: "Memoria al límite",
-              body: "La presión de memoria es crítica (\(Fmt.bytes(s.memory.used, binary: true)) en uso, swap \(Fmt.bytes(s.memory.swapUsed, binary: true))). Cierra apps que no estés usando.")
+              title: L("Memoria al límite"),
+              body: L("La presión de memoria es crítica (%@ en uso, swap %@). Cierra apps que no estés usando.",
+                       Fmt.bytes(s.memory.used, binary: true), Fmt.bytes(s.memory.swapUsed, binary: true)))
 
         // Disco.
         if s.diskTotal > 0 {
             let free = s.diskFree / s.diskTotal
             check(.disk, on: free < 0.10, off: free > 0.12,
-                  title: "Poco espacio en disco",
-                  body: "Quedan \(Fmt.bytes(s.diskFree)) libres (\(Fmt.pct(free))).")
+                  title: L("Poco espacio en disco"),
+                  body: L("Quedan %@ libres (%@).", Fmt.bytes(s.diskFree), Fmt.pct(free)))
         }
 
         // Batería.
         if let b = s.battery {
             check(.battery, on: !b.onAC && b.percent <= 0.15, off: b.onAC || b.percent > 0.20,
-                  title: "Batería baja",
-                  body: "Queda \(Fmt.pct(b.percent))" + (b.minutes.map { " (unos \(Fmt.minutes($0)))" } ?? "") + ". Conecta el cargador.")
+                  title: L("Batería baja"),
+                  body: b.minutes.map { L("Queda %@ (unos %@). Conecta el cargador.", Fmt.pct(b.percent), Fmt.minutes($0)) }
+                      ?? L("Queda %@. Conecta el cargador.", Fmt.pct(b.percent)))
         }
 
         // Internet: 3 mediciones fallidas seguidas estando conectado a una red.
         if prefs.latencyHost != nil {
             check(.internet, on: s.latencyFailures >= 3 && s.net.interface != nil, off: s.latencyFailures == 0,
-                  title: "Sin conexión a internet",
-                  body: "Estás conectado a \(s.net.kind), pero no hay respuesta de internet.",
-                  recovered: "Conexión a internet restablecida")
+                  title: L("Sin conexión a internet"),
+                  body: L("Estás conectado a %@, pero no hay respuesta de internet.", s.net.kind),
+                  recovered: L("Conexión a internet restablecida"))
         } else {
             active.remove(.internet)
             current[.internet] = nil
@@ -94,8 +96,8 @@ final class Alerts: NSObject, ObservableObject, UNUserNotificationCenterDelegate
         // Temperatura.
         check(.thermal, on: s.thermal == .serious || s.thermal == .critical,
               off: s.thermal == .nominal || s.thermal == .fair,
-              title: "El equipo está muy caliente",
-              body: "macOS está limitando el rendimiento para enfriarse. Revisa los procesos que más CPU consumen.")
+              title: L("El equipo está muy caliente"),
+              body: L("macOS está limitando el rendimiento para enfriarse. Revisa los procesos que más CPU consumen."))
     }
 
     private func check(_ kind: Kind, on: Bool, off: Bool, title: String, body: @autoclosure () -> String, recovered: String? = nil) {

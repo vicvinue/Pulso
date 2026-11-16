@@ -189,10 +189,10 @@ struct WidgetView: View {
 
     private var thermalInfo: (String, Color) {
         switch s.thermal {
-        case .nominal: return ("Normal", .green)
-        case .fair: return ("Templado", .yellow)
-        case .serious: return ("Caliente", .orange)
-        case .critical: return ("Crítico", .red)
+        case .nominal: return (L("Normal"), .green)
+        case .fair: return (L("Templado"), .yellow)
+        case .serious: return (L("Caliente"), .orange)
+        case .critical: return (L("Crítico"), .red)
         @unknown default: return ("—", .secondary)
         }
     }
@@ -207,10 +207,10 @@ struct WidgetView: View {
                 Image(systemName: "cursorarrow.slash")
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary)
-                    .help("Ignorando clics (⌃⌥C para desactivar)")
+                    .help(L("Ignorando clics (⌃⌥C para desactivar)"))
             }
             if !compact {
-                Text("activo \(Fmt.duration(s.uptime))")
+                Text(L("activo %@", Fmt.duration(s.uptime)))
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary)
             }
@@ -220,7 +220,7 @@ struct WidgetView: View {
             }
             .font(.system(size: 10))
             .foregroundStyle(.secondary)
-            .help("Estado térmico del sistema")
+            .help(L("Estado térmico del sistema"))
         }
     }
 
@@ -259,7 +259,7 @@ struct WidgetView: View {
                     LegendDot(color: .purple, label: "GPU")
                     Spacer()
                     if s.load.count == 3 {
-                        Text(String(format: "carga %.2f · %.2f · %.2f", locale: Locale.current, s.load[0], s.load[1], s.load[2]))
+                        Text(L("carga %.2f · %.2f · %.2f", s.load[0], s.load[1], s.load[2]))
                     }
                 }
                 .font(.system(size: 10))
@@ -273,9 +273,9 @@ struct WidgetView: View {
 
     private var pressureInfo: (String, Color) {
         switch s.memory.pressure {
-        case 4: return ("crítica", .red)
-        case 2: return ("alta", .orange)
-        default: return ("normal", .green)
+        case 4: return (L("crítica"), .red)
+        case 2: return (L("alta"), .orange)
+        default: return (L("normal"), .green)
         }
     }
 
@@ -283,7 +283,7 @@ struct WidgetView: View {
         let m = s.memory
         let total = max(m.total, 1)
         return VStack(alignment: .leading, spacing: 5) {
-            SectionHeader(icon: "memorychip", title: "MEMORIA",
+            SectionHeader(icon: "memorychip", title: L("MEMORIA"),
                           value: compact ? Fmt.bytes(m.used, binary: true)
                                              : "\(Fmt.bytes(m.used, binary: true)) / \(Fmt.bytes(m.total, binary: true))",
                           valueColor: pressureInfo.1 == .green ? .primary : pressureInfo.1)
@@ -300,13 +300,15 @@ struct WidgetView: View {
                     Spacer()
                     HStack(spacing: 3) {
                         Circle().fill(pressureInfo.1).frame(width: 5, height: 5)
-                        Text("presión \(pressureInfo.0)")
+                        Text(L("presión %@", pressureInfo.0))
                     }
                 }
                 .font(.system(size: 10))
                 .foregroundStyle(.secondary)
-                Detail(text: "Caché \(Fmt.bytes(m.cached, binary: true)) · Swap \(Fmt.bytes(m.swapUsed, binary: true))"
-                       + (m.swapTotal > 0 ? " de \(Fmt.bytes(m.swapTotal, binary: true))" : ""))
+                Detail(text: m.swapTotal > 0
+                       ? L("Caché %@ · Swap %@ de %@", Fmt.bytes(m.cached, binary: true), Fmt.bytes(m.swapUsed, binary: true),
+                           Fmt.bytes(m.swapTotal, binary: true))
+                       : L("Caché %@ · Swap %@", Fmt.bytes(m.cached, binary: true), Fmt.bytes(m.swapUsed, binary: true)))
             }
         }
     }
@@ -317,15 +319,15 @@ struct WidgetView: View {
         let used = max(s.diskTotal - s.diskFree, 0)
         let frac = s.diskTotal > 0 ? used / s.diskTotal : 0
         return VStack(alignment: .leading, spacing: 5) {
-            SectionHeader(icon: "internaldrive", title: "DISCO",
-                          value: "\(Fmt.bytes(s.diskFree)) libres",
+            SectionHeader(icon: "internaldrive", title: L("DISCO"),
+                          value: L("%@ libres", Fmt.bytes(s.diskFree)),
                           valueColor: frac > 0.9 ? .red : (frac > 0.8 ? .orange : .primary))
             SegmentedBar(segments: [Segment(fraction: frac, color: loadColor(frac))])
             if !compact {
                 HStack {
-                    Detail(text: "\(Fmt.pct(frac)) de \(Fmt.bytes(s.diskTotal)) usado")
+                    Detail(text: L("%@ de %@ usado", Fmt.pct(frac), Fmt.bytes(s.diskTotal)))
                     Spacer()
-                    Detail(text: "L \(Fmt.rate(s.diskRead)) · E \(Fmt.rate(s.diskWrite))")
+                    Detail(text: L("L %@ · E %@", Fmt.rate(s.diskRead), Fmt.rate(s.diskWrite)))
                 }
             }
         }
@@ -340,27 +342,28 @@ struct WidgetView: View {
 
     private var networkSection: some View {
         VStack(alignment: .leading, spacing: 5) {
-            SectionHeader(icon: "network", title: "RED",
+            SectionHeader(icon: "network", title: L("RED"),
                           value: "↓ \(Fmt.rate(s.netIn))  ↑ \(Fmt.rate(s.netOut))")
             if !compact {
                 Sparkline(series: [(s.netInHistory, .teal), (s.netOutHistory, .orange)], floor: 50_000)
                     .frame(height: 26)
                 HStack(spacing: 6) {
                     Detail(text: s.net.kind
+                           + (s.net.band.map { " \($0)" } ?? "")
                            + (s.net.rssi.map { " \($0) dBm" } ?? "")
                            + (s.net.ip.map { " · \($0)" } ?? ""))
                     Spacer(minLength: 2)
                     if let host = prefs.latencyHost {
                         HStack(spacing: 3) {
                             Circle().fill(s.latencyChecked ? latencyColor : Color.secondary).frame(width: 5, height: 5)
-                            Text(!s.latencyChecked ? "midiendo…" : s.latency.map { "\(Int($0.rounded())) ms" } ?? "sin internet")
+                            Text(!s.latencyChecked ? L("midiendo…") : s.latency.map { "\(Int($0.rounded())) ms" } ?? L("sin internet"))
                         }
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
-                        .help("Latencia: tiempo de conexión a \(host)")
+                        .help(L("Latencia: tiempo de conexión a %@", host))
                     }
                 }
-                Detail(text: "Sesión: ↓ \(Fmt.bytes(s.sessionIn))  ↑ \(Fmt.bytes(s.sessionOut))")
+                Detail(text: L("Sesión: ↓ %@  ↑ %@", Fmt.bytes(s.sessionIn), Fmt.bytes(s.sessionOut)))
             }
         }
     }
@@ -379,13 +382,13 @@ struct WidgetView: View {
             }
         }()
         let state: String = {
-            if b.charging { return b.minutes.map { "cargando · llena en \(Fmt.minutes($0))" } ?? "cargando" }
-            if b.onAC { return b.charged ? "cargada · conectada" : "conectada" }
-            return b.minutes.map { "quedan \(Fmt.minutes($0))" } ?? "calculando…"
+            if b.charging { return b.minutes.map { L("cargando · llena en %@", Fmt.minutes($0)) } ?? L("cargando") }
+            if b.onAC { return b.charged ? L("cargada · conectada") : L("conectada") }
+            return b.minutes.map { L("quedan %@", Fmt.minutes($0)) } ?? L("calculando…")
         }()
         let color: Color = b.percent < 0.2 && !b.onAC ? .red : (b.percent < 0.4 ? .orange : .green)
         return VStack(alignment: .leading, spacing: 5) {
-            SectionHeader(icon: icon, title: "BATERÍA", value: Fmt.pct(b.percent),
+            SectionHeader(icon: icon, title: L("BATERÍA"), value: Fmt.pct(b.percent),
                           valueColor: b.percent < 0.2 && !b.onAC ? .red : .primary,
                           trailing: b.watts.map { String(format: "%.1f W", locale: Locale.current, $0) })
             SegmentedBar(segments: [Segment(fraction: b.percent, color: color)])
@@ -393,7 +396,7 @@ struct WidgetView: View {
                 HStack {
                     Detail(text: state)
                     Spacer()
-                    Detail(text: [b.health.map { "salud \(Fmt.pct($0))" }, b.cycles.map { "\($0) ciclos" }]
+                    Detail(text: [b.health.map { L("salud %@", Fmt.pct($0)) }, b.cycles.map { L("%ld ciclos", $0) }]
                         .compactMap { $0 }.joined(separator: " · "))
                 }
             }
@@ -404,7 +407,7 @@ struct WidgetView: View {
 
     private var processSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            SectionHeader(icon: "list.bullet.rectangle", title: "PROCESOS", value: "")
+            SectionHeader(icon: "list.bullet.rectangle", title: L("PROCESOS"), value: "")
             ForEach(s.processes) { p in
                 HStack(spacing: 6) {
                     Text(p.name)

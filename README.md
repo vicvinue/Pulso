@@ -6,7 +6,7 @@
 
 <p align="center">
   Widget flotante y semitransparente para macOS que muestra el rendimiento del Mac en vivo.<br>
-  <sub>A floating, translucent live performance widget for macOS (Apple Silicon). UI in Spanish.</sub>
+  <sub>A floating, translucent live performance widget for macOS (Apple Silicon). UI in Spanish and English, following the system language.</sub>
 </p>
 
 <p align="center">

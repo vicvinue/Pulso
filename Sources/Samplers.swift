@@ -189,7 +189,9 @@ func readNetTotals() -> (rx: UInt64, tx: UInt64) {
 
 struct NetIdentity {
     var interface: String?
-    var kind: String = "Sin conexión"
+    var kind: String = L("Sin conexión")
+    /// Banda Wi-Fi: "2,4 GHz", "5 GHz" o "6 GHz" (nil si no es Wi-Fi o no se sabe).
+    var band: String?
     var ip: String?
     var rssi: Int?
 }
@@ -205,6 +207,12 @@ func readNetIdentity() -> NetIdentity {
     if iface == wifi?.interfaceName {
         id.kind = "Wi-Fi"
         if let r = wifi?.rssiValue(), r != 0 { id.rssi = r }
+        switch wifi?.wlanChannel()?.channelBand {
+        case .band2GHz?: id.band = String(format: "%.1f GHz", locale: Locale.current, 2.4)
+        case .band5GHz?: id.band = "5 GHz"
+        case .band6GHz?: id.band = "6 GHz"
+        default: break
+        }
     } else if iface.hasPrefix("utun") || iface.hasPrefix("ipsec") {
         id.kind = "VPN"
     } else if iface.hasPrefix("en") {

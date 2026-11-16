@@ -1,0 +1,87 @@
+/* Pulso — English. Keys are the original Spanish texts (see Sources/L10n.swift). */
+
+/* Alerts */
+"Presión de memoria crítica" = "Critical memory pressure";
+"Disco con menos de 10 % libre" = "Disk under 10% free";
+"Batería bajo 15 %" = "Battery below 15%";
+"Sin conexión a internet" = "No internet connection";
+"Equipo muy caliente" = "Mac running hot";
+"Pulso funciona" = "Pulso is working";
+"Así se verán los avisos de memoria, disco, batería, internet y temperatura." = "This is how memory, disk, battery, internet and temperature alerts will look.";
+"Memoria al límite" = "Memory at its limit";
+"La presión de memoria es crítica (%@ en uso, swap %@). Cierra apps que no estés usando." = "Memory pressure is critical (%@ in use, %@ swap). Quit apps you're not using.";
+"Poco espacio en disco" = "Low disk space";
+"Quedan %@ libres (%@)." = "%@ free (%@).";
+"Batería baja" = "Low battery";
+"Queda %@ (unos %@). Conecta el cargador." = "%@ left (about %@). Plug in the charger.";
+"Queda %@. Conecta el cargador." = "%@ left. Plug in the charger.";
+"Estás conectado a %@, pero no hay respuesta de internet." = "You're connected to %@, but the internet isn't responding.";
+"Conexión a internet restablecida" = "Internet connection restored";
+"El equipo está muy caliente" = "Your Mac is running very hot";
+"macOS está limitando el rendimiento para enfriarse. Revisa los procesos que más CPU consumen." = "macOS is limiting performance to cool down. Check the processes using the most CPU.";
+
+/* Menu */
+"Pulso — ignorando clics (⌃⌥C para desactivar)" = "Pulso — ignoring clicks (⌃⌥C to turn off)";
+"Pulso — monitor del sistema" = "Pulso — system monitor";
+"Ocultar widget" = "Hide Widget";
+"Mostrar widget" = "Show Widget";
+"Ignorar clics (atravesable)" = "Ignore Clicks (Click-Through)";
+"Modo compacto" = "Compact Mode";
+"Opacidad" = "Opacity";
+"%ld %%" = "%ld%%";
+"Posición" = "Position";
+"Siempre encima" = "Always on Top";
+"En el escritorio (detrás de ventanas)" = "On the Desktop (Behind Windows)";
+"Volver a la esquina superior derecha" = "Move Back to Top-Right Corner";
+"Tema" = "Theme";
+"Oscuro" = "Dark";
+"Claro" = "Light";
+"Según el sistema" = "Match System";
+"Latencia a internet" = "Internet Latency";
+"Desactivada" = "Off";
+"Cada %ld s" = "Every %ld s";
+"Avisos" = "Alerts";
+"⚠︎ macOS bloquea las notificaciones de Pulso — Permitir…" = "⚠︎ macOS is blocking Pulso's notifications — Allow…";
+"Enviar aviso de prueba" = "Send Test Alert";
+"Ajustes de notificaciones…" = "Notification Settings…";
+"Abrir al iniciar sesión" = "Open at Login";
+"Abrir Monitor de Actividad" = "Open Activity Monitor";
+"Salir de Pulso" = "Quit Pulso";
+"No se pudo cambiar el inicio automático" = "Couldn't change the Open at Login setting";
+
+/* Widget */
+"Normal" = "Normal";
+"Templado" = "Warm";
+"Caliente" = "Hot";
+"Crítico" = "Critical";
+"Ignorando clics (⌃⌥C para desactivar)" = "Ignoring clicks (⌃⌥C to turn off)";
+"activo %@" = "up %@";
+"Estado térmico del sistema" = "System thermal state";
+"carga %.2f · %.2f · %.2f" = "load %.2f · %.2f · %.2f";
+"MEMORIA" = "MEMORY";
+"crítica" = "critical";
+"alta" = "high";
+"normal" = "normal";
+"presión %@" = "%@ pressure";
+"Caché %@ · Swap %@ de %@" = "Cache %@ · Swap %@ of %@";
+"Caché %@ · Swap %@" = "Cache %@ · Swap %@";
+"DISCO" = "DISK";
+"%@ libres" = "%@ free";
+"%@ de %@ usado" = "%@ of %@ used";
+"L %@ · E %@" = "R %@ · W %@";
+"RED" = "NETWORK";
+"Sin conexión" = "Not connected";
+"midiendo…" = "measuring…";
+"sin internet" = "no internet";
+"Latencia: tiempo de conexión a %@" = "Latency: connection time to %@";
+"Sesión: ↓ %@  ↑ %@" = "Session: ↓ %@  ↑ %@";
+"BATERÍA" = "BATTERY";
+"cargando · llena en %@" = "charging · full in %@";
+"cargando" = "charging";
+"cargada · conectada" = "charged · plugged in";
+"conectada" = "plugged in";
+"quedan %@" = "%@ left";
+"calculando…" = "calculating…";
+"salud %@" = "health %@";
+"%ld ciclos" = "%ld cycles";
+"PROCESOS" = "PROCESSES";
